@@ -12,8 +12,8 @@ default_args = {
 }
 
 def fetch_reddit_posts():
-    subreddit = "dataengineering"
-    url = f"https://www.reddit.com/r/IIITUna/hot.json?limit=5"
+    subreddit='Btechtards'
+    url = f"https://www.reddit.com/r/{subreddit}/hot.json?limit=5"
     headers = {'User-Agent': 'astro-dag-agent'}
     response = requests.get(url, headers=headers)
     posts = response.json()["data"]["children"]
@@ -27,14 +27,14 @@ def fetch_reddit_posts():
     local_path = "/usr/local/airflow/include/reddit_data"
 
     os.makedirs(local_path, exist_ok=True)
-    with open(f"{local_path}/top_posts.json", "w") as f:
+    with open(f"{local_path}/top_posts_{datetime.now()}.json", "w") as f:
         json.dump(output, f, indent=4)
 
 with DAG(
     dag_id="reddit_scraper_dag",
     default_args=default_args,
     start_date=datetime(2024, 6, 24),
-    schedule="@daily",
+    schedule=timedelta(minutes=1),
     catchup=False
 ) as dag:
 
